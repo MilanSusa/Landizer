@@ -43,7 +43,7 @@ SELECT *
 FROM predictions
 WHERE id = :id
 
--- :name get-predictions-for-user :? :n
+-- :name get-predictions-for-user :? :*
 -- :doc retrieves prediction records given the user id
 SELECT *
 FROM predictions
