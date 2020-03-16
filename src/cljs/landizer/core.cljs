@@ -7,7 +7,8 @@
     [landizer.ajax :as ajax]
     [ajax.core :refer [GET POST]]
     [reitit.core :as reitit]
-    [clojure.string :as string])
+    [clojure.string :as string]
+    [landizer.sw.registration :as registration])
   (:import goog.History))
 
 (defonce session (r/atom {:page :home}))
@@ -88,4 +89,6 @@
   (ajax/load-interceptors!)
   (fetch-docs!)
   (hook-browser-navigation!)
-  (mount-components))
+  (mount-components)
+  (registration/register-installation-listener!)
+  (registration/register-service-worker!))

@@ -6,6 +6,7 @@
       <title>Landizer - Landmark Recognizer</title>
       <link rel="manifest" href="/manifest.json">
       <link rel="apple-touch-icon" href="/img/landizer-192x192.png">
+      <meta name="theme-color" content="white"/>
   </head>
   <body>
     <div id="navbar"></div>
@@ -21,5 +22,6 @@
         var csrfToken = "{{csrf-token}}";
     </script>
     {% script "/js/app.js" %}
+    <script src="service-worker.js"></script>
   </body>
 </html>
