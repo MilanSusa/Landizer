@@ -1,0 +1,23 @@
+{
+  "name": "Landizer - Landmark Recognizer",
+  "short_name": "Landizer",
+  "icons": [
+    {
+      "src": "/img/landizer-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/img/landizer-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/resources/html/home.html",
+  "scope": ".",
+  "background_color": "white",
+  "theme_color": "white",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "lang": "en-US"
+}
