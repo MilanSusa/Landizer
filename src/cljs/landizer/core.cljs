@@ -9,34 +9,9 @@
     [reitit.core :as reitit]
     [clojure.string :as string]
     [landizer.sw.registration :as registration]
-    [landizer.store.session :refer [session]])
+    [landizer.store.session :refer [session]]
+    [landizer.containers.navbar :refer [navbar]])
   (:import goog.History))
-
-(defn nav-link [uri title page]
-  [:a.navbar-item
-   {:href  uri
-    :class (when (= page (:page @session)) "is-active")}
-   title])
-
-(defn navbar []
-  (r/with-let [expanded? (r/atom false)]
-              [:nav.navbar.is-info>div.container
-               [:div.navbar-brand
-                [:a.navbar-item {:href "/" :style {:font-weight :bold}} "landizer"]
-                [:span.navbar-burger.burger
-                 {:data-target :nav-menu
-                  :on-click    #(swap! expanded? not)
-                  :class       (when @expanded? :is-active)}
-                 [:span] [:span] [:span]]]
-               [:div#nav-menu.navbar-menu
-                {:class (when @expanded? :is-active)}
-                [:div.navbar-start
-                 [nav-link "#/" "Home" :home]
-                 [nav-link "#/about" "About" :about]]]]))
-
-(defn about-page []
-  [:section.section>div.container>div.content
-   [:img {:src "/img/warning_clojure.png"}]])
 
 (defn home-page []
   [:section.section>div.container>div.content
@@ -44,8 +19,7 @@
      [:div {:dangerouslySetInnerHTML {:__html (md->html docs)}}])])
 
 (def pages
-  {:home  #'home-page
-   :about #'about-page})
+  {:home  #'home-page})
 
 (defn page []
   [(pages (:page @session))])
