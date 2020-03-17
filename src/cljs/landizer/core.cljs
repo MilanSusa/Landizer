@@ -10,13 +10,9 @@
     [clojure.string :as string]
     [landizer.sw.registration :as registration]
     [landizer.store.session :refer [session]]
+    [landizer.components.home :refer [home-page]]
     [landizer.containers.navbar :refer [navbar]])
   (:import goog.History))
-
-(defn home-page []
-  [:section.section>div.container>div.content
-   (when-let [docs (:docs @session)]
-     [:div {:dangerouslySetInnerHTML {:__html (md->html docs)}}])])
 
 (def pages
   {:home  #'home-page})
