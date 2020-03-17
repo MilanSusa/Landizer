@@ -8,10 +8,9 @@
     [ajax.core :refer [GET POST]]
     [reitit.core :as reitit]
     [clojure.string :as string]
-    [landizer.sw.registration :as registration])
+    [landizer.sw.registration :as registration]
+    [landizer.store.session :refer [session]])
   (:import goog.History))
-
-(defonce session (r/atom {:page :home}))
 
 (defn nav-link [uri title page]
   [:a.navbar-item
