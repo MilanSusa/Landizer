@@ -10,7 +10,8 @@
     [landizer.middleware.formats :as formats]
     [landizer.middleware.exception :as exception]
     [ring.util.http-response :refer :all]
-    [clojure.java.io :as io]))
+    [clojure.java.io :as io]
+    [landizer.dao.user-dao :as user-dao]))
 
 (defn service-routes []
   ["/api"
@@ -46,6 +47,21 @@
      {:get (swagger-ui/create-swagger-ui-handler
              {:url "/api/swagger.json"
               :config {:validator-url nil}})}]]
+
+   ["/register"
+    {:post {:summary    "registers a user"
+            :parameters {:body {:first_name string?
+                                :last_name  string?
+                                :email      string?
+                                :password   string?}}
+            :responses  {200 {:body {:message string?}}
+                         400 {:body {:message string?}}}
+            :handler    (fn [{{{:keys [first_name last_name email password]} :body} :parameters}]
+                          (try
+                            (user-dao/create-user! first_name last_name email password)
+                            (ok {:message "Registration successful!"})
+                            (catch Exception e
+                              "An error occurred while registering a user!")))}}]
 
    ["/ping"
     {:get (constantly (ok {:message "pong"}))}]
