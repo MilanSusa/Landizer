@@ -14,3 +14,9 @@
                                                 :last_name  last_name
                                                 :email      email
                                                 :password   (hashers/derive password)}))))
+
+(defn login-user! [email password]
+  (let [{hashed-password :password :as user}
+        (db/get-user-by-email {:email email})]
+    (when (hashers/check password hashed-password)
+      (dissoc user :password))))

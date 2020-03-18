@@ -54,7 +54,7 @@
                                 :last_name  string?
                                 :email      string?
                                 :password   string?}}
-            :responses  {200 {:body {:message string?}}
+            :responses  {201 {:body {:message string?}}
                          400 {:body {:message string?}}}
             :handler    (fn [{{{:keys [first_name last_name email password]} :body} :parameters}]
                           (try
@@ -62,6 +62,20 @@
                             (ok {:message "Registration successful!"})
                             (catch Exception e
                               "An error occurred while registering a user!")))}}]
+
+   ["/login"
+    {:post {:summary    "logs the user in"
+            :parameters {:body {:email    string?
+                                :password string?}}
+            :responses  {200 {:body {:identity {:email string?}}}
+                         401 {:body {:message string?}}}
+            :handler    (fn [{{{:keys [email password]} :body} :parameters
+                              session                          :session}]
+                          (if-some [user (user-dao/login-user! email password)]
+                            (-> (ok {:identity user})
+                                (assoc :session (assoc session :identity user)))
+                            (unauthorized
+                              {:message "Invalid email and/or password!"})))}}]
 
    ["/ping"
     {:get (constantly (ok {:message "pong"}))}]
