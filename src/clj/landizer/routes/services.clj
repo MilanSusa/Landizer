@@ -77,6 +77,12 @@
                             (unauthorized
                               {:message "Invalid email and/or password!"})))}}]
 
+   ["/logout"
+    {:post {:summary "logs the user out"
+            :handler (fn [_]
+                       (-> (ok)
+                           (assoc :session nil)))}}]
+
    ["/ping"
     {:get (constantly (ok {:message "pong"}))}]
    
