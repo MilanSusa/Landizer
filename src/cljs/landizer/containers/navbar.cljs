@@ -23,4 +23,6 @@
                [:div#nav-menu.navbar-menu
                 {:class (when @expanded? :is-active)}
                 [:div.navbar-start
-                 [nav-link "#/" "Home" :home expanded?]]]]))
+                 [nav-link "#/" "Home" :home expanded?]
+                 (when (= (:user-id @session) nil)
+                   [nav-link "#/register" "Register" :reg expanded?])]]]))
