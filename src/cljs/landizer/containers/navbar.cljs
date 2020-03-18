@@ -27,4 +27,6 @@
                  (when (= (:user-id @session) nil)
                    [nav-link "#/register" "Register" :reg expanded?])
                  (when (= (:user-id @session) nil)
-                   [nav-link "#/login" "Login" :login expanded?])]]]))
+                   [nav-link "#/login" "Login" :login expanded?])
+                 (when (not= (:user-id @session) nil)
+                   [nav-link "#/logout" "Logout" :logout expanded?])]]]))

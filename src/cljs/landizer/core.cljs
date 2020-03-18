@@ -11,15 +11,17 @@
     [landizer.sw.registration :as registration]
     [landizer.store.session :refer [session]]
     [landizer.components.home :refer [home-page]]
+    [landizer.components.logout :refer [logout-page]]
     [landizer.containers.navbar :refer [navbar]]
     [landizer.containers.register :refer [register-page]]
     [landizer.containers.login :refer [login-page]])
   (:import goog.History))
 
 (def pages
-  {:home  #'home-page
-   :reg   #'register-page
-   :login #'login-page})
+  {:home   #'home-page
+   :reg    #'register-page
+   :login  #'login-page
+   :logout #'logout-page})
 
 (defn page []
   [(pages (:page @session))])
@@ -32,7 +34,8 @@
     [["/" :home]
      ["/about" :about]
      ["/register" :reg]
-     ["/login" :login]]))
+     ["/login" :login]
+     ["/logout" :logout]]))
 
 (defn match-route [uri]
   (->> (or (not-empty (string/replace uri #"^.*#" "")) "/")
