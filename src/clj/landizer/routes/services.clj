@@ -85,7 +85,16 @@
                            (assoc :session nil)))}}]
 
    ["/predictions"
-    {:post {:summary    "creates prediction for user with given id"
+    {:get  {:summary    "returns all predictions for user with given id"
+            :parameters {:query {:user_id int?}}
+            :responses  {200 {:body {:data seq?}}
+                         404 {:body {:message string?}}}
+            :handler    (fn [{{{:keys [user_id]} :query} :parameters}]
+                          (try
+                            (ok {:data (prediction-dao/get-predictions-for-user user_id)})
+                            (catch Exception e
+                              (.getMessage e))))}
+     :post {:summary    "creates prediction for user with given id"
             :parameters {:body {:image       string?
                                 :probability double?
                                 :landmark    string?
