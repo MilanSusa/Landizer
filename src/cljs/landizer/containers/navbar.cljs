@@ -26,6 +26,8 @@
                  [nav-link "#/" "Home" :home expanded?]
                  (when (not= (:user-id @session) nil)
                    [nav-link "#/recognize" "Recognize" :recognize expanded?])
+                 (when (not= (:user-id @session) nil)
+                   [nav-link "#/history" "History" :history expanded?])
                  (when (= (:user-id @session) nil)
                    [nav-link "#/register" "Register" :reg expanded?])
                  (when (= (:user-id @session) nil)
