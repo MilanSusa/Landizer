@@ -43,7 +43,8 @@
                                                       (reset! inputs {})
                                                       (swap! session assoc :user-id (-> response
                                                                                         :identity
-                                                                                        :id)))
+                                                                                        :id))
+                                                      (set! (.-location js/window) "/#/recognize"))
                                      :error-handler #(reset! error (or (-> %
                                                                            :response
                                                                            :message)

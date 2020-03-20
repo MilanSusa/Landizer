@@ -14,14 +14,16 @@
     [landizer.components.logout :refer [logout-page]]
     [landizer.containers.navbar :refer [navbar]]
     [landizer.containers.register :refer [register-page]]
-    [landizer.containers.login :refer [login-page]])
+    [landizer.containers.login :refer [login-page]]
+    [landizer.containers.recognize :refer [recognize-page]])
   (:import goog.History))
 
 (def pages
-  {:home   #'home-page
-   :reg    #'register-page
-   :login  #'login-page
-   :logout #'logout-page})
+  {:home      #'home-page
+   :recognize #'recognize-page
+   :reg       #'register-page
+   :login     #'login-page
+   :logout    #'logout-page})
 
 (defn page []
   [(pages (:page @session))])
@@ -32,7 +34,7 @@
 (def router
   (reitit/router
     [["/" :home]
-     ["/about" :about]
+     ["/recognize" :recognize]
      ["/register" :reg]
      ["/login" :login]
      ["/logout" :logout]]))
