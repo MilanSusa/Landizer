@@ -11,7 +11,8 @@
     [landizer.middleware.exception :as exception]
     [ring.util.http-response :refer :all]
     [clojure.java.io :as io]
-    [landizer.dao.user-dao :as user-dao]))
+    [landizer.dao.user-dao :as user-dao]
+    [landizer.dao.prediction-dao :as prediction-dao]))
 
 (defn service-routes []
   ["/api"
@@ -82,6 +83,21 @@
             :handler (fn [_]
                        (-> (ok)
                            (assoc :session nil)))}}]
+
+   ["/predictions"
+    {:post {:summary    "creates prediction for user with given id"
+            :parameters {:body {:image       string?
+                                :probability double?
+                                :landmark    string?
+                                :user_id     int?}}
+            :responses  {201 {:body {:message string?}}
+                         400 {:body {:message string?}}}
+            :handler    (fn [{{{:keys [image probability landmark user_id]} :body} :parameters}]
+                          (try
+                            (prediction-dao/create-prediction! landmark probability image user_id)
+                            (ok {:message "Prediction created"})
+                            (catch Exception e
+                              (.getMessage e))))}}]
 
    ["/ping"
     {:get (constantly (ok {:message "pong"}))}]
