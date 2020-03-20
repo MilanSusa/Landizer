@@ -10,7 +10,7 @@
 (defonce button-classes (r/atom #{"button" "is-black"}))
 (defonce prediction-announcement (r/atom nil))
 
-(defonce firebase-project-id "{your-firebase-project-it}")
+(defonce firebase-project-id "{your-firebase-project-id}")
 (defonce landmark-recognition-inference-api-base-url "http://localhost:8000")
 
 (defn- extract-content-from-wiki-response! [response]
