@@ -15,6 +15,14 @@
                                                 :email      email
                                                 :password   (hashers/derive password)}))))
 
+(defn get-user-by-email [email]
+  (jdbc/with-db-connection [t-conn db/*db*]
+                           (db/get-user-by-email t-conn {:email email})))
+
+(defn delete-user! [id]
+  (jdbc/with-db-transaction [t-conn db/*db*]
+                            (db/delete-user! t-conn {:id id})))
+
 (defn login-user! [email password]
   (let [{hashed-password :password :as user}
         (db/get-user-by-email {:email email})]
