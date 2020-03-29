@@ -1,4 +1,4 @@
-if( 'function' === typeof importScripts) {
+if ('function' === typeof importScripts) {
     importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js');
 
     const {registerRoute} = workbox.routing;
@@ -9,6 +9,13 @@ if( 'function' === typeof importScripts) {
         /\.css$/,
         new StaleWhileRevalidate({
             cacheName: 'css-cache',
+        })
+    );
+
+    registerRoute(
+        /\.js$/,
+        new StaleWhileRevalidate({
+            cacheName: 'js-cache',
         })
     );
 
