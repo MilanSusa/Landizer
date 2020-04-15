@@ -21,16 +21,10 @@
                                      [:p "Landizer thinks this landmark is:"]
                                      [:strong @prediction]]))
   (reset! content (-> response
-                      seq
-                      (nth 2)
-                      second
+                      :query
+                      :pages
                       first
-                      second
-                      first
-                      second
-                      seq
-                      (nth 3)
-                      second)))
+                      :extract)))
 
 (defn- wiki-content-handler! [response]
   (extract-content-from-wiki-response! response))
@@ -45,45 +39,47 @@
                          first)))
 
 (defn- perform-wiki-search! [response]
-  (reset! prediction (-> response
-                         seq
-                         (nth 2)
-                         second))
+  (reset! prediction (:landmark response))
   (GET (str "https://en.wikipedia.org/w/api.php?action=opensearch&format=json&origin=*&search=" @prediction)
        {:handler wiki-search-handler!}))
 
+(defn- build-firebase-upload-url []
+  (str "https://firebasestorage.clients6.google.com/v0/b/"
+       firebase-project-id
+       ".appspot.com/o?uploadType=multipart&name="
+       (.getTime (js/Date.))
+       ".jpg"))
+
+(defn- build-firebase-download-url [name token]
+  (str "https://firebasestorage.googleapis.com/v0/b/"
+       firebase-project-id
+       ".appspot.com/o/"
+       name
+       "?alt=media&token="
+       token))
+
+(defn- prediction-creation-handler! [res landmark probability]
+  (let [name (:name res)
+        token (:token res)
+        image (build-firebase-download-url name token)]
+    (POST "/api/predictions"
+          {:headers {"Content-Type" "application/json"}
+           :params  {:image       image
+                     :landmark    landmark
+                     :probability probability
+                     :user_id     (:user-id @session)}})))
+
 (defn- create-prediction! [response]
-  (let [[_ _ landmark-vec probability-vec] (seq response)
-        [_ landmark] landmark-vec
-        [_ probability] probability-vec
+  (let [landmark (:landmark response)
+        probability (:probability response)
         form-data (doto
                     (js/FormData.)
                     (.append "file" @image))]
-    (POST (str "https://firebasestorage.clients6.google.com/v0/b/"
-               firebase-project-id
-               ".appspot.com/o?uploadType=multipart&name="
-               (.getTime (js/Date.))
-               ".jpg")
+    (POST build-firebase-upload-url
           {:body            form-data
            :response-format :json
            :handler         (fn [res]
-                              (let [res-vec (seq res)
-                                    name-vec (nth res-vec 5)
-                                    token-vec (nth res-vec 12)
-                                    name (second name-vec)
-                                    token (second token-vec)
-                                    image (str "https://firebasestorage.googleapis.com/v0/b/"
-                                               firebase-project-id
-                                               ".appspot.com/o/"
-                                               name
-                                               "?alt=media&token="
-                                               token)]
-                                (POST "/api/predictions"
-                                      {:headers {"Content-Type" "application/json"}
-                                       :params  {:image       image
-                                                 :landmark    landmark
-                                                 :probability probability
-                                                 :user_id     (:user-id @session)}})))})))
+                              (prediction-creation-handler! res landmark probability))})))
 
 (defn- inference-handler! [response]
   (swap! button-classes disj "is-loading")
