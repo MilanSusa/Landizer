@@ -2,7 +2,9 @@
   (:require
     [reagent.core :as r]
     [landizer.store.session :refer [session]]
-    [ajax.core :refer [GET POST]]))
+    [ajax.core :refer [GET POST]]
+    [goog.string :as gstring]
+    [goog.string.format]))
 
 (defonce image (r/atom nil))
 (defonce prediction (r/atom nil))
@@ -30,7 +32,7 @@
   (extract-content-from-wiki-response! response))
 
 (defn- get-wiki-content! [title]
-  (GET (str "https://en.wikipedia.org/w/api.php?action=query&prop=extracts&rvprop=content&format=json&origin=*&titles=" title)
+  (GET (gstring/format "https://en.wikipedia.org/w/api.php?action=query&prop=extracts&rvprop=content&format=json&origin=*&titles=%s" title)
        {:handler wiki-content-handler!}))
 
 (defn- wiki-search-handler! [response]
@@ -40,23 +42,21 @@
 
 (defn- perform-wiki-search! [response]
   (reset! prediction (:landmark response))
-  (GET (str "https://en.wikipedia.org/w/api.php?action=opensearch&format=json&origin=*&search=" @prediction)
+  (GET (gstring/format "https://en.wikipedia.org/w/api.php?action=opensearch&format=json&origin=*&search=%s" @prediction)
        {:handler wiki-search-handler!}))
 
 (defn- build-firebase-upload-url []
-  (str "https://firebasestorage.clients6.google.com/v0/b/"
-       firebase-project-id
-       ".appspot.com/o?uploadType=multipart&name="
-       (.getTime (js/Date.))
-       ".jpg"))
+  (gstring/format
+     "https://firebasestorage.clients6.google.com/v0/b/%s.appspot.com/o?uploadType=multipart&name=%s.jpg"
+     firebase-project-id
+     (.getTime (js/Date.))))
 
 (defn- build-firebase-download-url [name token]
-  (str "https://firebasestorage.googleapis.com/v0/b/"
-       firebase-project-id
-       ".appspot.com/o/"
-       name
-       "?alt=media&token="
-       token))
+  (gstring/format
+     "https://firebasestorage.googleapis.com/v0/b/%s.appspot.com/o/%s?alt=media&token=%s"
+     firebase-project-id
+     name
+     token))
 
 (defn- prediction-creation-handler! [res landmark probability]
   (let [name (:name res)
@@ -97,7 +97,7 @@
   (let [form-data (doto
                     (js/FormData.)
                     (.append "image" @image))]
-    (POST (str landmark-recognition-inference-api-base-url "/inference/")
+    (POST (gstring/format "%s/inference/" landmark-recognition-inference-api-base-url)
           {:body            form-data
            :response-format :json
            :handler         inference-handler!})))
